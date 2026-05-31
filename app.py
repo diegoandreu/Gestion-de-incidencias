@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun May 31 14:31:23 2026
-
-@author: diegoandreu
-"""
-
 import csv
 import os
 from datetime import datetime
@@ -21,23 +13,28 @@ def inicializar_archivo():
 def obtener_siguiente_id():
     with open(ARCHIVO, "r", encoding="utf-8") as f:
         filas = list(csv.reader(f))
-    return len(filas)  # encabezado cuenta como fila 1, así ID empieza en 1
+    return len(filas)
+
+def pedir_opcion(mensaje, opciones):
+    opciones_lower = [o.lower() for o in opciones]
+    while True:
+        valor = input(f"{mensaje} ({'/'.join(opciones)}): ").strip().lower()
+        if valor in opciones_lower:
+            return valor
+        print(f"  ❌ Opción no válida. Por favor elige entre: {', '.join(opciones)}\n")
 
 def registrar_incidencia():
     print("\n--- NUEVA INCIDENCIA ---")
-    titulo = input("Título breve: ")
-    tipo = input("Tipo (hardware/red/software/otro): ")
-    prioridad = input("Prioridad (alta/media/baja): ")
-    responsable = input("Responsable: ")
-    descripcion = input("Descripción: ")
+    titulo = input("Título breve: ").strip()
+    tipo = pedir_opcion("Tipo", ["hardware", "red", "software", "otro"])
+    prioridad = pedir_opcion("Prioridad", ["alta", "media", "baja"])
+    responsable = input("Responsable: ").strip()
+    descripcion = input("Descripción: ").strip()
 
     nueva = [
         obtener_siguiente_id(),
-        titulo,
-        tipo,
-        prioridad,
-        "abierta",
-        responsable,
+        titulo, tipo, prioridad,
+        "abierta", responsable,
         datetime.now().strftime("%Y-%m-%d %H:%M"),
         descripcion
     ]
@@ -45,8 +42,69 @@ def registrar_incidencia():
     with open(ARCHIVO, "a", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow(nueva)
 
-    print(f"\nIncidencia #{nueva[0]} registrada correctamente.")
+    print(f"\n✅ Incidencia #{nueva[0]} registrada correctamente.")
 
-inicializar_archivo()
-registrar_incidencia()
+def listar_incidencias():
+    print("\n--- INCIDENCIAS REGISTRADAS ---")
+    with open(ARCHIVO, "r", encoding="utf-8") as f:
+        filas = list(csv.DictReader(f))
+
+    if not filas:
+        print("No hay incidencias registradas.")
+        return
+
+    for fila in filas:
+        print(f"[{fila['id']}] {fila['titulo']} | {fila['tipo']} | {fila['prioridad']} | {fila['estado']} | {fila['responsable']}")
+
+def cerrar_incidencia():
+    listar_incidencias()
+    id_cerrar = input("\nID de la incidencia a cerrar: ").strip()
+
+    filas = []
+    with open(ARCHIVO, "r", encoding="utf-8") as f:
+        filas = list(csv.DictReader(f))
+
+    encontrada = False
+    for fila in filas:
+        if fila["id"] == id_cerrar:
+            if fila["estado"] == "cerrada":
+                print("⚠️ Esta incidencia ya está cerrada.")
+                return
+            fila["estado"] = "cerrada"
+            encontrada = True
+
+    if not encontrada:
+        print("❌ ID no encontrado.")
+        return
+
+    with open(ARCHIVO, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=CAMPOS)
+        writer.writeheader()
+        writer.writerows(filas)
+
+    print(f"✅ Incidencia #{id_cerrar} cerrada correctamente.")
+
+def menu():
+    inicializar_archivo()
+    while True:
+        print("\n=== GESTOR DE INCIDENCIAS ===")
+        print("1. Registrar incidencia")
+        print("2. Ver incidencias")
+        print("3. Cerrar incidencia")
+        print("4. Salir")
+        opcion = input("Selecciona una opción: ").strip()
+
+        if opcion == "1":
+            registrar_incidencia()
+        elif opcion == "2":
+            listar_incidencias()
+        elif opcion == "3":
+            cerrar_incidencia()
+        elif opcion == "4":
+            print("Saliendo...")
+            break
+        else:
+            print("❌ Opción no válida. Elige entre 1 y 4.")
+
+menu()
 
