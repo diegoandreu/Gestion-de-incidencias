@@ -17,10 +17,16 @@ def inicializar_db():
                 estado TEXT NOT NULL DEFAULT 'abierta',
                 responsable TEXT NOT NULL,
                 fecha_apertura TEXT NOT NULL,
+                fecha_cierre TEXT,
                 descripcion TEXT
             )
         """)
-        conn.commit()
+        # Añadir columna fecha_cierre si ya existe la tabla sin ella
+        try:
+            conn.execute("ALTER TABLE incidencias ADD COLUMN fecha_cierre TEXT")
+            conn.commit()
+        except:
+            pass
 
 def insertar_incidencia(titulo, tipo, prioridad, responsable, descripcion):
     with conectar() as conn:
@@ -38,7 +44,11 @@ def obtener_incidencias():
 
 def cerrar_incidencia(id):
     with conectar() as conn:
-        conn.execute("UPDATE incidencias SET estado = 'cerrada' WHERE id = ?", (id,))
+        conn.execute("""
+            UPDATE incidencias 
+            SET estado = 'cerrada', fecha_cierre = ? 
+            WHERE id = ?
+        """, (datetime.now().strftime("%Y-%m-%d %H:%M"), id))
         conn.commit()
 
 def obtener_incidencia_por_id(id):
