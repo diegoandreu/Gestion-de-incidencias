@@ -1,0 +1,8 @@
+id,titulo,tipo,prioridad,estado,responsable,fecha_apertura,descripcion
+1,Problema discos duros HDD,ACQ4,Media,abierta,Diego,2026-05-31 14:38,Disco duro ACQ4 lleno que necesita repuesto
+2,BBDD crash,MariaDB,alta,abierta,Sergio,2026-05-31 14:43,Falta contraseña para iniciar sesion en servidor SQL y modificar datos de actualización
+3,Actualización servidor windows XP,Hardware,baja,abierta,Paco,2026-05-31 14:45,Drivers servidor XP no compatibles debido a OS desactualizado
+4,Power crash,hardware,alta,abierta,Sergio,2026-05-31 14:45,servidor caido debido a fallo en la alimentación de la máquina
+5,Fallo pc,Hardware,bAJA,abierta,DIEGO,2026-05-31 14:46,A maria no le funciona el teclado porque se ha roto el conector USB
+6,Fallo Visualización datos,red,alta,abierta,Diego,2026-05-31 14:47,A partir de las diez y media hemos dejado de visualizar datos sobre las compras diarias
+7,Falla eléctrica,Red,media,abierta,Maria,2026-05-31 14:48,Despues del apagon hemos dejado de realizar peticiones al servidor y no podemos comunicar con clientes

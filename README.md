@@ -1,2 +1,2 @@
-# Gestion de incidencias
-Visualización y gestión de incidencias técnica
+# gestion-incidencias
+Visualización y gestion de incidencias técnicas
